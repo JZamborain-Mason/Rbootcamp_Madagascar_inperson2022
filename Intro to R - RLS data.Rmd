@@ -1,0 +1,101 @@
+---
+title: "Intro to R modeling - Reef Life Survey data"
+author: "Daniel Viana and Jessica Zamborain Mason"
+date: "February 4, 2022"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this session, we will learn how to manipulate and visualize fisheries catch data using the functions we learned at the intro sessions 1 and 2.
+
+##Exercise - RLS data 
+
+We are going to work with data from underwater surveys conducted in Mozambique. This data is available from the Reef Life Survey website (reeflifesurvey.com) and contains fish counts per speceis and size classes. Therefore, for each survey site and species, divers counted the number of fish observed for each size class. For each survey, one transect of 5m x 50m was conducted (total area of 250m2). We will use this data to calculate total biomass of fish in each site.  
+
+1) Read explore the data ("RLS_MOZ.csv"). How many variables does the dataset have? What information it contains? 
+2) This data is in the wide format, where each size class is a different column. Transform this data into the long format, where size class is only one column and each row represent the observed number of fish (tip: use the reshape2::melt() function). Delete all rows with missing data or NA's (tip: use the drop_na() function). Rename columns.
+3) Read the data ("RLS_MOZspp_a_b.csv"). This data contains the "a" and "b" parameters needed to convert fish lenght to weight (All these values were taken from fishbase.se). Now, join the RLS survey data with the lenght/weight parameters (tip: use left_join() function).
+4) Calculate the estimated bimass for each row of data using the following equation: 
+$biomass = abundance*a*(length^b)$
+5) Plot the total biomass of fish per site.
+6) Plot total biomass of fish with size greater than 20cm.
+6) What other interesting analysis can you do with the data? What other interesting questions can you ask? try to do it! 
+
+##Answers
+1) Read explore the data ("RLS_MOZ.csv"). How many variables does the dataset have? What information it contains? 
+```{r}
+library(tidyverse)
+dta <- read_csv("data/RLS_MOZ.csv")
+head(dta)
+names(dta)
+str(dta)
+```
+
+
+2) Transform data to the wide format
+```{r}
+dta_wide = dta %>% 
+  reshape2::melt(id.vars = c("country", "site_code", "species_name")) %>% 
+  drop_na(value) %>% 
+  rename(length = variable,
+         abundance = value)
+```
+
+
+3) Add lenght/weight parameters
+```{r}
+RLS_MOZspp_a_b <- read_csv("data/RLS_MOZspp_a_b.csv")
+
+dta_wide = dta_wide %>% 
+  left_join(RLS_MOZspp_a_b)
+
+```
+
+4) Calculate biomass
+
+```{r}
+dta_wide = dta_wide %>% 
+  mutate(length = as.character(length),
+         length = as.numeric(length),
+         biomass = abundance*a*length^b)
+```
+
+5) Plot the total biomass of fish per site
+
+```{r}
+bio = dta_wide %>% 
+  group_by(site_code) %>% 
+  summarise(biomass = sum(biomass))
+
+ggplot(data = bio) +
+  geom_bar(aes(x = site_code, y = biomass), stat = "identity") +
+  labs(y = "Biomass (g/250m2)", x = "Survey site") +
+  theme_bw() +
+  theme(text = element_text(size = 15))
+
+```
+
+6) Plot the total biomass of fish greater than 10cm per site
+
+```{r}
+bio = dta_wide %>%
+  filter(length>20) %>% 
+  group_by(site_code) %>% 
+  summarise(biomass = sum(biomass))
+
+ggplot(data = bio) +
+  geom_bar(aes(x = site_code, y = biomass), stat = "identity") +
+  labs(y = "Biomass (g/250m2)", x = "Survey site") +
+  theme_bw() +
+  theme(text = element_text(size = 15))
+
+```

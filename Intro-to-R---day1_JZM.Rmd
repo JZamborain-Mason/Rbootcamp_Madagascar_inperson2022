@@ -1,6 +1,6 @@
 ---
 title: "Intro to modeling in R - Session 1"
-author: "Jessica Zamborain-Mason"
+author: "Daniel Viana and Jessica Zamborain Mason"
 date: "September 14, 2022"
 output:
   pdf_document: default
@@ -239,7 +239,6 @@ rm(x)
 ```
 
 
-
 # Vectors
 
 Vectors are 1 dimensional arrays of numbers.
@@ -388,7 +387,7 @@ x[1,,1]
 
 #Data frames
 
-A data frame is more general than a matrix, in that different columns can have different modes (numeric, character, factor, etc.). One example where you would need a data frame is when you categorize your data somehow.
+A data frame is more general than a matrix, in that different columns can have different class (numeric, character, factor, etc.). One example where you would need a data frame is when you categorize your data somehow.
 
 For example:
 
