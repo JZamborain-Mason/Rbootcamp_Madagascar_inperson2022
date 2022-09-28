@@ -1,7 +1,7 @@
 ---
-title: "Intro to R modeling Session 4 - Antogil Bay fisheries data"
+title: "R bootcamp exercise - Antogil Bay fisheries data"
 author: "Daniel Viana and Jessica Zamborain Mason"
-date: "February 4, 2022"
+date: "October, 2022"
 output:
   word_document:
     toc: yes
@@ -15,10 +15,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this session, we will learn how to manipulate and visualize fisheries catch data using the functions we learned at the intro sessions 1 and 2.
-
-##Exercise - Fisheries catch data 
-
 We are going to work with a dataset that contains post-harvest data for 5 villages in Antongil Bay, Madagascar. This data was collected with fishers between 2016 and 2017 and provides information such as species, catch (kg), number of fishers and fishing duration (effort in hours). In addition, it contains information on how much of the catch was destined to human consumption and how much was sold. Fishing gears are represented by numbers (net = 1, line = 2, palangra = 3, spear = 4, vovo = 5, hand net = 6, other = 7, multiple = 8).
 
 1) Read explore the data ("CPUE_data_Rcourse.csv"). How many variables does the dataset have? What information it contains? 
@@ -31,11 +27,12 @@ We are going to work with a dataset that contains post-harvest data for 5 villag
 8) What other interesting analysis can you do with the data? What other interesting questions can you ask? try to do it! 
 
 
-##Answers
+*Answers
+
 1) Read explore the data ("CPUE_data_Rcourse.csv"). How many variables does the dataset have? What information it contains? 
 ```{r}
 library(tidyverse)
-dta <- read_csv("data/CPUE_data_Rcourse.csv")
+dta <- read_csv("~/Rbootcamp_Madagascar/data/CPUE_data_Rcourse.csv")
 head(dta)
 names(dta)
 str(dta)
@@ -44,31 +41,43 @@ str(dta)
 
 2) Do a simple plot of the catch records through time.
 ```{r}
-ggplot(data = dta) +
+dta2 = dta %>% 
+  mutate(date = as.Date(date,
+  format = "%m/%d/%Y"))
+
+ggplot(data = dta2) +
   geom_point(aes(x = date, y = total_weight)) +
+  scale_x_date(date_labels =  "%b %Y") +
   labs(x = "Date", y = "Catch (kg)") +
-  theme_bw()
+  theme_classic()
 ```
 
 
 3) What is the total catch per village? Create a figure to show this.
 ```{r}
-dta %>% 
+dta2 = dta %>% 
   group_by(village) %>% 
-  summarise(catch = sum(total_weight)) %>% 
-  ggplot() +
-  geom_bar(aes(x = village, y = catch), stat = "identity")
+  summarise(catch = sum(total_weight)) 
+
+ggplot(data = dta2) +
+  geom_bar(aes(x = reorder(village, -catch), y = catch), stat = "identity") +
+  labs(x = "Village", y = "Catch (kg)") +
+  theme_classic()
+    
 ```
 
 4) What is the cath per fishing gear in each village?
 
 ```{r}
-dta %>% 
+dta2 = dta %>% 
   mutate(gear = as.factor(gear)) %>% 
   group_by(village, gear) %>% 
-  summarise(catch = sum(total_weight)) %>% 
-  ggplot() +
-  geom_bar(aes(x = village, y = catch, fill = gear), stat = "identity")
+  summarise(catch = sum(total_weight)) 
+
+ggplot(data = dta2) +
+  geom_bar(aes(x = village, y = catch, fill = gear), stat = "identity") +
+  labs(x = "Village", y = "Catch (kg)", fill = "Gear") +
+  theme_classic()
 ```
 
 5) What are the top 3 species caught in the entire bay? 
@@ -80,23 +89,26 @@ x = dta %>%
   arrange(desc(catch))
 
 top_spp = x$fish_name[1:3]
-
+top_spp
 ```
 
 
 6) What is the average monthly CPUE (catch per unit effort) of the top 3 species caught in the bay? Is there any seasonality on the CPUE thoughout the year? What does this mean?
 
 ```{r}
-dta %>%
+dta2 = dta %>%
   filter(fish_name %in% top_spp) %>% 
   mutate(cpue = total_weight/time_decimal) %>% 
   group_by(fish_name, month) %>% 
   summarise(cpue = mean(cpue)) %>% 
-  ungroup() %>% 
-  ggplot() +
-  geom_line(aes(x = month, y = cpue)) +
-  facet_wrap(~fish_name)
+  ungroup()
 
+ggplot(data = dta2) +
+  geom_line(aes(x = month, y = cpue)) +
+  facet_wrap(~fish_name) +
+  scale_x_continuous(breaks = c(1:12), labels = month.abb, guide = guide_axis(check.overlap = T)) +
+  labs(x = "Village", y = "Catch (kg)") +
+  theme_bw()
 
 ```
 
@@ -105,7 +117,7 @@ dta %>%
 
 ```{r}
 
-dta %>% 
+dta2 = dta %>% 
   group_by(village) %>% 
   summarise(sold = sum(total_sold),
             consumed = sum(total_consumed)) %>% 
@@ -115,8 +127,9 @@ dta %>%
   reshape2::melt(id.vars = c("village")) %>% 
   mutate(variable = recode(variable, 
                            "perc_sold" = "Sold",
-                           "perc_consumed" = "Consumed")) %>% 
-  ggplot() +
+                           "perc_consumed" = "Consumed"))
+
+ggplot(data = dta2) +
   geom_bar(aes(x = village, y = value, fill = variable), stat = "identity") +
   labs(x = "Village", y = "%", fill = "") +
   theme(axis.title = element_text(size=20),

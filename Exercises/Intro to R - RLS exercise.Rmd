@@ -1,0 +1,28 @@
+---
+title: "R bootcamp - Reef Life Survey data"
+author: "Daniel Viana and Jessica Zamborain Mason"
+date: "October, 2022"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We are going to work with data from underwater surveys conducted in Mozambique. This data is available from the Reef Life Survey website (reeflifesurvey.com) and contains fish counts per speceis and size classes. Therefore, for each survey site and species, divers counted the number of fish observed for each size class. For each survey, one transect of 5m x 50m was conducted (total area of 250m2). We will use this data to calculate total biomass of fish in each site.  
+
+1) Read explore the data ("RLS_MOZ.csv"). How many variables does the dataset have? What information it contains? 
+2) This data is in the wide format, where each size class is a different column. Transform this data into the long format, where size class is only one column and each row represent the observed number of fish (tip: use the reshape2::melt() function). Delete all rows with missing data or NA's (tip: use the drop_na() function). Rename columns.
+3) Read the data ("RLS_MOZspp_a_b.csv"). This data contains the "a" and "b" parameters needed to convert fish lenght to weight (All these values were taken from fishbase.se). Now, join the RLS survey data with the lenght/weight parameters (tip: use left_join() function).
+4) Calculate the estimated bimass for each row of data using the following equation: 
+$biomass = abundance*a*(length^b)$
+5) Plot the total biomass of fish per site.
+6) Plot total biomass of fish with size greater than 20cm.
+6) What other interesting analysis can you do with the data? What other interesting questions can you ask? try to do it! 
+

@@ -1,7 +1,7 @@
 ---
 title: "Intro to R - Session 2"
 author: "Daniel Viana and Jessica Zamborain Mason"
-date: "September 14, 2022"
+date: "October, 2022"
 output:
   word_document:
     toc: yes
@@ -41,7 +41,7 @@ library(WDI)
 dat = WDI(country = "all", indicator = c("malnut" = "5.51.01.02.malnut"), start=2005, end=2011, extra=TRUE, cache=NULL)
 
 ##If you do not have good internet connection, you can also read the csv data file we provided (WDI_malnut_dat.csv). I have stored the data in a "data"" folder inside my project folder. To read this data, you can use the read_csv() function:
-dat = read_csv("data/WDI_malnut_dat.csv")
+dat = read_csv("~/Rbootcamp_Madagascar/data/WDI_malnut_dat.csv")
 
 #Now lets inspect the data
 names(dat)

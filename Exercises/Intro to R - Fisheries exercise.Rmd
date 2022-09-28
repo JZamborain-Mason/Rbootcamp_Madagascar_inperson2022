@@ -1,0 +1,34 @@
+---
+title: "R bootcamp exercise - Antogil Bay fisheries data"
+author: "Daniel Viana and Jessica Zamborain Mason"
+date: "October, 2022"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Exercise - Fisheries catch data 
+
+We are going to work with a dataset that contains post-harvest data for 5 villages in Antongil Bay, Madagascar. This data was collected with fishers between 2016 and 2017 and provides information such as species, catch (kg), number of fishers and fishing duration (effort in hours). In addition, it contains information on how much of the catch was destined to human consumption and how much was sold. Fishing gears are represented by numbers (net = 1, line = 2, palangra = 3, spear = 4, vovo = 5, hand net = 6, other = 7, multiple = 8).
+
+1) Read explore the data ("CPUE_data_Rcourse.csv"). How many variables does the dataset have? What information it contains? 
+2) Do a simple plot of the catch records through time.
+3) What is the total catch per village? Create a figure to show this.
+4) What is the cath per fishing gear in each village?
+5) What are the top 3 species caught in the entire bay? 
+6) What is the average monthly CPUE (catch per unit effort) of the top 3 species caught in the bay? Is there any seasonality on the CPUE thoughout the year? What does this mean?
+7) for each village, what proportion of total catch is consumed vs sold?
+8) What other interesting analysis can you do with the data? What other interesting questions can you ask? try to do it! 
+
+
+
+
+

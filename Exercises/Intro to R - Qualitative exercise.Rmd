@@ -1,0 +1,28 @@
+---
+title: "R bootcamp - Fisheries stakeholders survey"
+author: "Daniel Viana and Jessica Zamborain Mason"
+date: "February 4, 2022"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We are going to work with data from a survey conducted with fisheries stakeholders in Brazil. Through an online survey, they were asked if they agree or diagree with the use of no-take areas for fisheries management. Respondents chose a response from 1 to 5, where: 1 - Agree, 2 - Partially agree, 3 - Neither agree or disagree, 4 - Partially disgree, 5 - Disagree.  
+
+1) Read explore the data ("data_qualitative.csv"). How many variables does the dataset have? What information it contains? How many respondents?
+
+2) Calculate the frequency distribution of responses. How many responses did we have for each option (1 to 5)?
+
+3) Calculate the relative frequency and percentage distributions of responses. What percentage of responses was 1, 2, 3, 4 and 5?
+
+4) Build a bar graph of the frequency distribution of responses.
+
+5) Build a pie chart of percentage distributions distribution of responses.

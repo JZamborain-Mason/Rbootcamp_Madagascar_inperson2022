@@ -1,0 +1,89 @@
+---
+title: "R bootcamp exercise - Fisheries stakeholders survey"
+author: "Daniel Viana and Jessica Zamborain Mason"
+date: "October, 2022"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We are going to work with data from a survey conducted with fisheries stakeholders in Brazil. Through an online survey, they were asked if they agree or diagree with the use of no-take areas for fisheries management. Respondents chose a response from 1 to 5, where: 1 - Agree, 2 - Partially agree, 3 - Neither agree or disagree, 4 - Partially disgree, 5 - Disagree.  
+
+1) Read explore the data ("data_qualitative.csv"). How many variables does the dataset have? What information it contains? How many respondents?
+2) Calculate the frequency distribution of responses. How many responses did we have for each option (1 to 5)?
+3) Calculate the relative frequency and percentage distributions of responses. What percentage of responses was 1, 2, 3, 4 and 5?
+4) Build a bar graph of the frequency distribution of responses.
+5) Build a pie chart of percentage distributions distribution of responses.
+
+
+##Answers
+1) Read explore the data ("data_qualitative.csv"). How many variables does the dataset have? What information it contains? How many respondents?
+```{r}
+library(tidyverse)
+dat <- read_csv("~/Rbootcamp_Madagascar/data/data_qualitative.csv")
+nrow(dat)
+```
+
+2) Calculate the frequency distribution of responses. How many responses did we have for each option (1 to 5)?
+```{r}
+dat %>% 
+  count(value)
+```
+
+3) Calculate the relative frequency and percentage distributions of responses. What percentage of responses was 1, 2, 3, 4 and 5?
+```{r}
+dat %>% 
+  count(value) %>% 
+  mutate(rel_freq = n/nrow(dat),
+         perc = rel_freq*100)
+```
+
+4) Build a bar graph of the frequency distribution of responses.
+
+```{r}
+freq_dat = dat %>% 
+  count(value) %>% 
+  mutate(rel_freq = n/nrow(dat),
+         perc = rel_freq*100,
+         response = case_when(value == 1 ~ "Agree", 
+                              value == 2 ~ "Partially agree",
+                              value == 3 ~ "Neither agree or disagree", 
+                              value == 4 ~ "Partially disagree", 
+                              value == 5 ~ "Disagree"))
+
+ggplot(data = freq_dat, aes(x = reorder(response, n), y = n)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "", y = "Frequency") +
+  theme_classic()
+```
+5) Build a pie chart of percentage distributions distribution of responses.
+```{r}
+freq_dat = dat %>% 
+  count(value) %>% 
+  mutate(rel_freq = n/nrow(dat),
+         perc = rel_freq*100,
+         response = case_when(value == 1 ~ "Agree", 
+                              value == 2 ~ "Partially agree",
+                              value == 3 ~ "Neither agree or disagree", 
+                              value == 4 ~ "Partially disagree", 
+                              value == 5 ~ "Disagree"),
+         lab = paste(round(perc), "%", sep = ""),
+         ypos = c(80, 52, 25, 3))
+
+ggplot(data = freq_dat, aes(x = "", y = perc, fill = response)) +
+  geom_bar(width=1, color="white", stat = "identity") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill = "") +
+  geom_text(aes(y = ypos, label = lab), color = "white", size=6) +
+  scale_fill_brewer(palette="Set1")
+```
